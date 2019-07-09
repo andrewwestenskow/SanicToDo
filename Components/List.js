@@ -172,7 +172,7 @@ class List extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>{this.state.name}</Text>
         {this.state.incomplete.length > 0 ? <View style={styles.listNameHold}>{this.state.incomplete.map(element => {
-          return <Text onLongPress={() => this.deleteItem(element.key, 'incomplete')} onPress={() => this.completeItem(element.key)} style={styles.listName} key={element.key}>{element.text}</Text>
+          return <Text onLongPress={() => this.deleteItem(element.key, 'incomplete')} onPress={() => this.completeItem(element.key)} style={styles.listItem} key={element.key}>{element.text}</Text>
         })}</View> : <></>}
         <View style={styles.addListHold}>
           <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} title='item' placeholder='Add an item' value={this.state.item} onChangeText={(item) => this.setState({ item })} />
@@ -180,7 +180,7 @@ class List extends Component {
         </View>
         <View style={styles.listNameHold}>
           {this.state.complete.map(element => {
-            return <Text onLongPress={() => this.deleteItem(element.key, 'complete')} onPress={() => this.undoComplete(element.key)} style={styles.listName} key={element.key}>{element.text}</Text>
+            return <Text onLongPress={() => this.deleteItem(element.key, 'complete')} onPress={() => this.undoComplete(element.key)} style={styles.listItemComplete} key={element.key}>{element.text}</Text>
           })}
         </View>
       </View>
@@ -191,7 +191,7 @@ class List extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue',
+    backgroundColor: 'black',
     alignItems: 'center',
     paddingTop: 50
   },
@@ -207,14 +207,24 @@ const styles = StyleSheet.create({
     color: 'yellow',
     textDecorationLine: 'underline'
   },
-  listName: {
+  listItem: {
     textAlign: 'left',
-    fontSize: 36,
-    color: 'yellow',
-    borderTopColor: 'black',
-    borderBottomColor: 'black',
+    fontSize: 28,
+    color: 'white',
+    borderTopColor: 'white',
+    borderBottomColor: 'white',
     borderTopWidth: 1,
     borderBottomWidth: 1
+  },
+  listItemComplete: {
+    textAlign: 'left',
+    fontSize: 28,
+    color: 'white',
+    borderTopColor: 'white',
+    borderBottomColor: 'white',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    textDecorationLine: 'line-through'
   },
   listNameHold: {
     marginTop: 5,

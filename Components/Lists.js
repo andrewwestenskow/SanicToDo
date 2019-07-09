@@ -5,7 +5,7 @@ import { withNavigation } from 'react-navigation'
 class Lists extends Component {
 
   state = {
-    addNew: false,
+    addNew: true,
     lists: [],
     name: ''
   }
@@ -100,7 +100,7 @@ class Lists extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Lists from SANIC</Text>
+        <Text style={styles.title}>My Lists</Text>
 
         {this.state.lists.length > 0 ?
 
@@ -109,10 +109,10 @@ class Lists extends Component {
           })}</View> : <></>}
         {this.state.addNew &&
           <View style={styles.addListHold}>
-            <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} onChangeText={(name) => this.setState({ name })} placeholder='list name' />
-            <Button onPress={this.addList} title='Confirm' />
+            <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} onChangeText={(name) => this.setState({ name })} placeholder='List name' />
+            <Button onPress={this.addList} title='+ Add' />
           </View>}
-        <Button style={styles.addNewButton} onPress={this.addNew} title='+ Add New List' />
+        {/* <Button style={styles.addNewButton} onPress={this.addNew} title='+ Add New List' /> */}
         {/* <Button style={styles.addNewButton} onPress={this.removeAll} title='Delete all lists' /> */}
       </View>
     )
@@ -124,7 +124,7 @@ export default withNavigation(Lists)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue',
+    backgroundColor: 'black',
     alignItems: 'center',
     paddingTop: 50
   },
@@ -143,9 +143,9 @@ const styles = StyleSheet.create({
   listName: {
     textAlign: 'left',
     fontSize: 36,
-    color: 'yellow',
-    borderTopColor: 'black',
-    borderBottomColor: 'black',
+    color: 'white',
+    borderTopColor: 'white',
+    borderBottomColor: 'white',
     borderTopWidth: 1,
     borderBottomWidth: 1
   },
@@ -153,8 +153,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 15,
     width: '80%',
-    borderTopColor: 'black',
-    borderBottomColor: 'black',
+    borderTopColor: 'white',
+    borderBottomColor: 'white',
     borderTopWidth: 1,
     borderBottomWidth: 1
   },
