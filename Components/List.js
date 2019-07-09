@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Button, Alert } from 'react-native'
 
 class List extends Component {
 
@@ -8,7 +8,8 @@ class List extends Component {
     incomplete: [],
     name: '',
     item: '',
-    key: null
+    key: null,
+    confirm: false
   }
 
   componentDidMount() {
@@ -24,13 +25,24 @@ class List extends Component {
   }
 
   addItem = () => {
+    if (!this.state.item) {
+      return
+    }
     let incomplete = [...this.state.incomplete]
     let key
-    if (incomplete.length === 0) {
-      key = 1
-    } else {
-      key = incomplete[incomplete.length - 1].key
+    let keys = [...this.state.incomplete, ...this.state.complete]
+    if (keys.length !== 0) {
+      keys.sort((a, b) => {
+        if (a.key > b.key) {
+          return 1
+        } else {
+          return -1
+        }
+      })
+      key = keys[keys.length - 1].key
       key++
+    } else {
+      key = 0
     }
     incomplete.push({ text: this.state.item, key: key })
     this.setState({
@@ -59,9 +71,6 @@ class List extends Component {
     })
     complete.push(incomplete[index])
     incomplete.splice(index, 1)
-    if (!incomplete[0].key) {
-      incomplete = []
-    }
     this.setState({
       incomplete,
       complete
@@ -102,12 +111,68 @@ class List extends Component {
     this.props.navigation.state.params.save(list)
   }
 
+  deleteItem = (key, list) => {
+    Alert.alert(
+      'Delete Item?',
+      'Are you sure?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed', key),
+          style: 'cancel',
+        },
+        {
+          text: 'OK', onPress: () => {
+            let arr
+            if (list === 'incomplete') {
+              arr = [...this.state.incomplete]
+            } else {
+              arr = [...this.state.complete]
+            }
+            let index = arr.findIndex(element => {
+              return element.key === key
+            })
+            arr.splice(index, 1)
+            if (list === 'incomplete') {
+              this.setState({
+                incomplete: arr
+              })
+            } else {
+              this.setState({
+                complete: arr
+              })
+            }
+
+            let newList
+            if (list === 'incomplete') {
+              newList = {
+                name: this.state.name,
+                incomplete: arr,
+                complete: this.state.complete,
+                key: this.state.key
+              }
+            } else {
+              newList = {
+                name: this.state.name,
+                incomplete: this.state.incomplete,
+                complete: arr,
+                key: this.state.key
+              }
+            }
+            this.props.navigation.state.params.save(newList)
+          }
+        },
+      ],
+      { cancelable: false },
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{this.state.name}</Text>
         {this.state.incomplete.length > 0 ? <View style={styles.listNameHold}>{this.state.incomplete.map(element => {
-          return <Text onPress={() => this.completeItem(element.key)} style={styles.listName} key={element.key}>{element.text}</Text>
+          return <Text onLongPress={() => this.deleteItem(element.key, 'incomplete')} onPress={() => this.completeItem(element.key)} style={styles.listName} key={element.key}>{element.text}</Text>
         })}</View> : <></>}
         <View style={styles.addListHold}>
           <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} title='item' placeholder='Add an item' value={this.state.item} onChangeText={(item) => this.setState({ item })} />
@@ -115,7 +180,7 @@ class List extends Component {
         </View>
         <View style={styles.listNameHold}>
           {this.state.complete.map(element => {
-            return <Text onPress={() => this.undoComplete(element.key)} style={styles.listName} key={element.key}>{element.text}</Text>
+            return <Text onLongPress={() => this.deleteItem(element.key, 'complete')} onPress={() => this.undoComplete(element.key)} style={styles.listName} key={element.key}>{element.text}</Text>
           })}
         </View>
       </View>
