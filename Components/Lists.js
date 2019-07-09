@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, Button, TextInput, AsyncStorage } from 'react-native'
-import {withNavigation} from 'react-navigation'
+import { withNavigation } from 'react-navigation'
 
 class Lists extends Component {
 
@@ -10,9 +10,11 @@ class Lists extends Component {
     name: ''
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
+    // console.log('hit')
     const lists = await AsyncStorage.getItem('Lists')
-    if(lists) {
+    if (lists) {
+      // console.log('hit 2')
       this.setState({
         lists: JSON.parse(lists),
       })
@@ -30,10 +32,10 @@ class Lists extends Component {
   addList = async () => {
     let newLists = [...this.state.lists]
 
-    let num 
+    let num
 
-    if(newLists.length > 0){
-      num = newLists[newLists.length -1].key
+    if (newLists.length > 0) {
+      num = newLists[newLists.length - 1].key
       num++
     } else {
       num = 1
@@ -51,15 +53,17 @@ class Lists extends Component {
 
     try {
       let lists = JSON.stringify(newLists)
+      // console.log('hit 3')
+      this.setState({
+        addNew: false,
+        lists: newLists,
+        name: ''
+      })
       await AsyncStorage.setItem('Lists', lists)
+      // console.log('hit 5')
     } catch (error) {
       console.log(error)
     }
-    this.setState({
-      addNew: false,
-      lists: newLists,
-      name: ''
-    })
   }
 
   removeAll = async () => {
@@ -68,12 +72,12 @@ class Lists extends Component {
 
   saveLists = async (newList) => {
 
-    console.log(newList)
+    // console.log(newList)
     let lists = [...this.state.lists]
     let index = lists.findIndex(element => {
       return newList.key === element.key
     })
-    console.log(index)
+    // console.log(index)
     lists.splice(index, 1, newList)
 
     // console.log(lists)
@@ -81,6 +85,7 @@ class Lists extends Component {
     let data = JSON.stringify(lists)
 
     await AsyncStorage.setItem('Lists', data)
+    // console.log('hit 4')
 
     let newLists = await AsyncStorage.getItem('Lists')
     this.setState({
@@ -89,7 +94,7 @@ class Lists extends Component {
   }
 
   goToList = (list) => {
-    this.props.navigation.navigate('List', {list: list, save: this.saveLists})
+    this.props.navigation.navigate('List', { list: list, save: this.saveLists })
   }
 
   render() {
@@ -97,14 +102,14 @@ class Lists extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>Lists from SANIC</Text>
 
-        {this.state.lists.length > 0 ? 
-        
-        <View style={styles.listNameHold}>{this.state.lists.map(element => {
-          return <Text onPress={() => this.goToList(element)} style={styles.listName} key={element.name}> - {element.name}</Text>
-        })}</View> : <></>}
+        {this.state.lists.length > 0 ?
+
+          <View style={styles.listNameHold}>{this.state.lists.map(element => {
+            return <Text onPress={() => this.goToList(element)} style={styles.listName} key={element.name}> - {element.name}</Text>
+          })}</View> : <></>}
         {this.state.addNew &&
           <View style={styles.addListHold}>
-            <TextInput style={{width: '80%', fontSize: 24, color:'white'}} onChangeText={(name) => this.setState({ name })} placeholder='list name' />
+            <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} onChangeText={(name) => this.setState({ name })} placeholder='list name' />
             <Button onPress={this.addList} title='Confirm' />
           </View>}
         <Button style={styles.addNewButton} onPress={this.addNew} title='+ Add New List' />
@@ -133,7 +138,7 @@ const styles = StyleSheet.create({
     fontSize: 42,
     fontWeight: '700',
     color: 'yellow',
-    textDecorationLine:'underline'
+    textDecorationLine: 'underline'
   },
   listName: {
     textAlign: 'left',
@@ -147,7 +152,7 @@ const styles = StyleSheet.create({
   listNameHold: {
     marginTop: 5,
     marginBottom: 15,
-    width:'80%',
+    width: '80%',
     borderTopColor: 'black',
     borderBottomColor: 'black',
     borderTopWidth: 1,
