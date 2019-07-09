@@ -112,7 +112,6 @@ class Lists extends Component {
             <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} onChangeText={(name) => this.setState({ name })} placeholder='List name' />
             <Button onPress={this.addList} title='+ Add' />
           </View>}
-        {/* <Button style={styles.addNewButton} onPress={this.addNew} title='+ Add New List' /> */}
         {/* <Button style={styles.addNewButton} onPress={this.removeAll} title='Delete all lists' /> */}
       </View>
     )

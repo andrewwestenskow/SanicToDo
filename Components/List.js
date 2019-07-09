@@ -214,7 +214,9 @@ const styles = StyleSheet.create({
     borderTopColor: 'white',
     borderBottomColor: 'white',
     borderTopWidth: 1,
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+    paddingTop: 5,
+    paddingBottom: 5
   },
   listItemComplete: {
     textAlign: 'left',
@@ -224,7 +226,9 @@ const styles = StyleSheet.create({
     borderBottomColor: 'white',
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    textDecorationLine: 'line-through'
+    textDecorationLine: 'line-through',
+    paddingTop: 5,
+    paddingBottom: 5
   },
   listNameHold: {
     marginTop: 5,
