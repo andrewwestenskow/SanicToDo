@@ -205,14 +205,17 @@ class List extends Component {
 
   render() {
     return (
-      <KeyboardAvoidingView behavior='position'>
+      <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'black' }} behavior='padding'>
         <ScrollView>
           <View style={styles.container}>
             <Text style={styles.title}>{this.state.name}</Text>
             {this.state.incomplete.length > 0 ?
               <View style={styles.listNameHold}>
                 {this.state.incomplete.map(element => {
-                  return <View key={element.key} style={styles.listItemHold} >
+                  return <View
+                    key={element.key}
+                    style={styles.listItemHold}
+                  >
                     <CheckBox onPress={() => this.completeItem(element.key)} />
                     {this.state.editKey !== element.key ?
                       <Text
@@ -238,7 +241,10 @@ class List extends Component {
             </View>
             <View style={styles.listNameHold}>
               {this.state.complete.map(element => {
-                return <View key={element.key} style={styles.listItemHold}>
+                return <View
+                  key={element.key}
+                  style={styles.listItemHold}
+                >
                   <CheckBox
                     onPress={() => this.undoComplete(element.key)}
                     checked={true} />
