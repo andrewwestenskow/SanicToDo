@@ -97,7 +97,7 @@ class Lists extends Component {
     this.props.navigation.navigate('List', { list: list, save: this.saveLists })
   }
 
-  deleteItem =  (key) => {
+  deleteItem = (key) => {
     Alert.alert(
       'Delete List',
       'Are you sure?',
@@ -137,11 +137,20 @@ class Lists extends Component {
         {this.state.lists.length > 0 ?
 
           <View style={styles.listNameHold}>{this.state.lists.map(element => {
-            return <Text onLongPress={()=>this.deleteItem(element.key)} onPress={() => this.goToList(element)} style={styles.listName} key={element.name}> - {element.name}</Text>
+            return <Text onLongPress={() => this.deleteItem(element.key)}
+              onPress={() => this.goToList(element)}
+              style={styles.listName}
+              key={element.name}>
+              - {element.name}
+            </Text>
           })}</View> : <></>}
         {this.state.addNew &&
           <View style={styles.addListHold}>
-            <TextInput onSubmitEditing={this.addList} style={{ width: '80%', fontSize: 24, color: 'white' }} onChangeText={(name) => this.setState({ name })} placeholder='Add new list' />
+            <TextInput
+              onSubmitEditing={this.addList}
+              style={{ width: '80%', fontSize: 24, color: 'white' }}
+              onChangeText={(name) => this.setState({ name })}
+              placeholder='Add new list' />
           </View>}
         {/* <Button style={styles.addNewButton} onPress={this.removeAll} title='Delete all lists' /> */}
       </View>
