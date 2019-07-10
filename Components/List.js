@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, StyleSheet, Alert } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Alert, ScrollView, Keyboard } from 'react-native'
 import { CheckBox } from 'react-native-elements'
 
 class List extends Component {
@@ -178,6 +178,7 @@ class List extends Component {
   }
 
   editItem = () => {
+    Keyboard.dismiss
     let list = [...this.state.incomplete]
     let index = list.findIndex(element => {
       return element.key === this.state.editKey
@@ -204,27 +205,31 @@ class List extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>{this.state.name}</Text>
-        {this.state.incomplete.length > 0 ? <View style={styles.listNameHold}>{this.state.incomplete.map(element => {
-          return <View key={element.key} style={styles.listItemHold} >
-            <CheckBox onPress={() => this.completeItem(element.key)} />
-            {this.state.editKey !== element.key ? <Text onPress={() => this.setEditKey(element.key, element.text)} onLongPress={() => this.deleteItem(element.key, 'incomplete')} style={styles.listItem}>{element.text}</Text> :
-              <TextInput onBlur={this.editItem} onSubmitEditing={this.editItem} autoFocus={true} style={{ width: '80%', fontSize: 24, color: 'white' }} value={this.state.editItem} onChangeText={(editItem) => this.setState({ editItem })} />}
+      <ScrollView contentContainerStyle={{flex: 1}}>
+        <View style={styles.container}>
+          <Text style={styles.title}>{this.state.name}</Text>
+          {this.state.incomplete.length > 0 ?
+            <View style={styles.listNameHold}>{this.state.incomplete.map(element => {
+              return <View key={element.key} style={styles.listItemHold} >
+                <CheckBox onPress={() => this.completeItem(element.key)} />
+                {this.state.editKey !== element.key ? <Text onPress={() => this.setEditKey(element.key, element.text)} onLongPress={() => this.deleteItem(element.key, 'incomplete')} style={styles.listItem}>{element.text}</Text> :
+                  <TextInput onBlur={this.editItem} onSubmitEditing={this.editItem} autoFocus={true} style={{ width: '80%', fontSize: 24, color: 'white' }} value={this.state.editItem} onChangeText={(editItem) => this.setState({ editItem })} />}
+              </View>
+            })}</View> : <></>}
+          <View style={styles.addListHold}>
+            <TextInput blurOnSubmit={false} style={{ width: '80%', fontSize: 24, color: 'white' }} title='item' placeholder='Add an item' value={this.state.item} onChangeText={(item) => this.setState({ item })} onSubmitEditing={this.addItem} />
+            <View style={{flex: 1}}/>
           </View>
-        })}</View> : <></>}
-        <View style={styles.addListHold}>
-          <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} title='item' placeholder='Add an item' value={this.state.item} onChangeText={(item) => this.setState({ item })} onSubmitEditing={this.addItem} />
+          <View style={styles.listNameHold}>
+            {this.state.complete.map(element => {
+              return <View key={element.key} style={styles.listItemHold}>
+                <CheckBox onPress={() => this.undoComplete(element.key)} checked={true} />
+                <Text onLongPress={() => this.deleteItem(element.key, 'complete')} style={styles.listItemComplete}>{element.text}</Text>
+              </View>
+            })}
+          </View>
         </View>
-        <View style={styles.listNameHold}>
-          {this.state.complete.map(element => {
-            return <View key={element.key} style={styles.listItemHold}>
-              <CheckBox onPress={() => this.undoComplete(element.key)} checked={true} />
-              <Text onLongPress={() => this.deleteItem(element.key, 'complete')} style={styles.listItemComplete}>{element.text}</Text>
-            </View>
-          })}
-        </View>
-      </View>
+      </ScrollView >
     )
   }
 }
@@ -240,7 +245,9 @@ const styles = StyleSheet.create({
     width: '80%',
     display: 'flex',
     flexDirection: 'row',
-    color: 'white'
+    color: 'white',
+    alignItems: 'flex-end',
+    marginBottom: 25
   },
   title: {
     fontSize: 42,
@@ -261,13 +268,15 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomWidth: 1,
     textAlign: 'left',
-    alignItems: 'center'
+    alignItems: 'center',
+    alignItems: 'flex-end'
   },
   listItemComplete: {
     textAlign: 'left',
     textDecorationLine: 'line-through',
     fontSize: 28,
     color: 'white',
+    alignItems: 'flex-end'
   },
   listNameHold: {
     marginTop: 5,
@@ -277,11 +286,6 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
     borderTopWidth: 1,
     borderBottomWidth: 1
-  },
-  addNewButton: {
-    marginTop: 100,
-    padding: 15,
-    fontSize: 24
   }
 });
 
