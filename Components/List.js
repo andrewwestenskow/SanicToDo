@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { View, Text, TextInput, StyleSheet, Button, Alert } from 'react-native'
+import { CheckBox } from 'react-native-elements'
 
 class List extends Component {
 
@@ -9,7 +10,9 @@ class List extends Component {
     name: '',
     item: '',
     key: null,
-    confirm: false
+    confirm: false,
+    editKey: null,
+    editItem: ''
   }
 
   componentDidMount() {
@@ -167,20 +170,58 @@ class List extends Component {
     );
   }
 
+  setEditKey = (key, value) => {
+    this.setState({
+      editKey: key,
+      editItem: value
+    })
+  }
+
+  editItem = () => {
+    let list = [...this.state.incomplete]
+    let index = list.findIndex(element => {
+      return element.key === this.state.editKey
+    })
+
+    let editedItem = {
+      text: this.state.editItem,
+      key: this.state.editKey
+    }
+    list.splice(index, 1, editedItem)
+    let newList = {
+      name: this.state.name,
+      incomplete: list,
+      complete: this.state.complete,
+      key: this.state.key
+    }
+    this.props.navigation.state.params.save(newList)
+    this.setState({
+      editKey: null,
+      editItem: '',
+      incomplete: list
+    })
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{this.state.name}</Text>
         {this.state.incomplete.length > 0 ? <View style={styles.listNameHold}>{this.state.incomplete.map(element => {
-          return <Text onLongPress={() => this.deleteItem(element.key, 'incomplete')} onPress={() => this.completeItem(element.key)} style={styles.listItem} key={element.key}>{element.text}</Text>
+          return <View key={element.key} style={styles.listItemHold} >
+            <CheckBox onPress={() => this.completeItem(element.key)} />
+            {this.state.editKey !== element.key ? <Text onPress={() => this.setEditKey(element.key, element.text)} onLongPress={() => this.deleteItem(element.key, 'incomplete')} style={styles.listItem}>{element.text}</Text> :
+              <TextInput onEndEditing={this.editItem} onSubmitEditing={this.editItem} autoFocus={true} style={{ width: '80%', fontSize: 24, color: 'white' }} value={this.state.editItem} onChangeText={(editItem) => this.setState({ editItem })} />}
+          </View>
         })}</View> : <></>}
         <View style={styles.addListHold}>
-          <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} title='item' placeholder='Add an item' value={this.state.item} onChangeText={(item) => this.setState({ item })} />
-          <Button onPress={this.addItem} title='+ Add' />
+          <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} title='item' placeholder='Add an item' value={this.state.item} onChangeText={(item) => this.setState({ item })} onSubmitEditing={this.addItem} />
         </View>
         <View style={styles.listNameHold}>
           {this.state.complete.map(element => {
-            return <Text onLongPress={() => this.deleteItem(element.key, 'complete')} onPress={() => this.undoComplete(element.key)} style={styles.listItemComplete} key={element.key}>{element.text}</Text>
+            return <View key={element.key} style={styles.listItemHold}>
+              <CheckBox onPress={() => this.undoComplete(element.key)} checked={true} />
+              <Text onLongPress={() => this.deleteItem(element.key, 'complete')} style={styles.listItemComplete}>{element.text}</Text>
+            </View>
           })}
         </View>
       </View>
@@ -211,24 +252,22 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 28,
     color: 'white',
+  },
+  listItemHold: {
+    display: 'flex',
+    flexDirection: 'row',
     borderTopColor: 'white',
     borderBottomColor: 'white',
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    paddingTop: 5,
-    paddingBottom: 5
+    textAlign: 'left',
+    alignItems: 'center'
   },
   listItemComplete: {
     textAlign: 'left',
+    textDecorationLine: 'line-through',
     fontSize: 28,
     color: 'white',
-    borderTopColor: 'white',
-    borderBottomColor: 'white',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    textDecorationLine: 'line-through',
-    paddingTop: 5,
-    paddingBottom: 5
   },
   listNameHold: {
     marginTop: 5,

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, Button, TextInput, AsyncStorage } from 'react-native'
+import { Text, View, StyleSheet, Alert, TextInput, AsyncStorage } from 'react-native'
 import { withNavigation } from 'react-navigation'
 
 class Lists extends Component {
@@ -97,6 +97,38 @@ class Lists extends Component {
     this.props.navigation.navigate('List', { list: list, save: this.saveLists })
   }
 
+  deleteItem =  (key) => {
+    Alert.alert(
+      'Delete Item?',
+      'Are you sure?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed', key),
+          style: 'cancel',
+        },
+        {
+          text: 'OK', onPress: async () => {
+            let arr = [...this.state.lists]
+            let index = arr.findIndex(element => {
+              return element.key === key
+            })
+            arr.splice(index, 1)
+            let data = JSON.stringify(arr)
+
+            await AsyncStorage.setItem('Lists', data)
+
+            let newLists = await AsyncStorage.getItem('Lists')
+            this.setState({
+              lists: JSON.parse(newLists)
+            })
+          }
+        },
+      ],
+      { cancelable: false },
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -105,12 +137,11 @@ class Lists extends Component {
         {this.state.lists.length > 0 ?
 
           <View style={styles.listNameHold}>{this.state.lists.map(element => {
-            return <Text onPress={() => this.goToList(element)} style={styles.listName} key={element.name}> - {element.name}</Text>
+            return <Text onLongPress={()=>this.deleteItem(element.key)} onPress={() => this.goToList(element)} style={styles.listName} key={element.name}> - {element.name}</Text>
           })}</View> : <></>}
         {this.state.addNew &&
           <View style={styles.addListHold}>
-            <TextInput style={{ width: '80%', fontSize: 24, color: 'white' }} onChangeText={(name) => this.setState({ name })} placeholder='List name' />
-            <Button onPress={this.addList} title='+ Add' />
+            <TextInput onSubmitEditing={this.addList} style={{ width: '80%', fontSize: 24, color: 'white' }} onChangeText={(name) => this.setState({ name })} placeholder='Add new list' />
           </View>}
         {/* <Button style={styles.addNewButton} onPress={this.removeAll} title='Delete all lists' /> */}
       </View>
