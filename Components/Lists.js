@@ -99,7 +99,7 @@ class Lists extends Component {
 
   deleteItem =  (key) => {
     Alert.alert(
-      'Delete Item?',
+      'Delete List',
       'Are you sure?',
       [
         {

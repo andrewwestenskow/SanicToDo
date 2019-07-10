@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, StyleSheet, Button, Alert } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native'
 import { CheckBox } from 'react-native-elements'
 
 class List extends Component {
@@ -116,7 +116,7 @@ class List extends Component {
 
   deleteItem = (key, list) => {
     Alert.alert(
-      'Delete Item?',
+      'Delete Item',
       'Are you sure?',
       [
         {
@@ -210,7 +210,7 @@ class List extends Component {
           return <View key={element.key} style={styles.listItemHold} >
             <CheckBox onPress={() => this.completeItem(element.key)} />
             {this.state.editKey !== element.key ? <Text onPress={() => this.setEditKey(element.key, element.text)} onLongPress={() => this.deleteItem(element.key, 'incomplete')} style={styles.listItem}>{element.text}</Text> :
-              <TextInput onEndEditing={this.editItem} onSubmitEditing={this.editItem} autoFocus={true} style={{ width: '80%', fontSize: 24, color: 'white' }} value={this.state.editItem} onChangeText={(editItem) => this.setState({ editItem })} />}
+              <TextInput onBlur={this.editItem} onSubmitEditing={this.editItem} autoFocus={true} style={{ width: '80%', fontSize: 24, color: 'white' }} value={this.state.editItem} onChangeText={(editItem) => this.setState({ editItem })} />}
           </View>
         })}</View> : <></>}
         <View style={styles.addListHold}>
