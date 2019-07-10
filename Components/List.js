@@ -205,7 +205,7 @@ class List extends Component {
 
   render() {
     return (
-      <ScrollView contentContainerStyle={{flex: 1}}>
+      <ScrollView style={{backgroundColor: 'black'}}>
         <View style={styles.container}>
           <Text style={styles.title}>{this.state.name}</Text>
           {this.state.incomplete.length > 0 ?
@@ -246,8 +246,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     color: 'white',
-    alignItems: 'flex-end',
-    marginBottom: 25
+    alignItems: 'flex-end'
   },
   title: {
     fontSize: 42,
