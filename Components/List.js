@@ -1,8 +1,13 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, StyleSheet, Alert, ScrollView, Keyboard, KeyboardAvoidingView, SafeAreaView } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Alert, ScrollView, Keyboard, KeyboardAvoidingView } from 'react-native'
+import { Header } from 'react-navigation'
 import { CheckBox } from 'react-native-elements'
 
 class List extends Component {
+
+  static navigationOptions = {
+    title: 'My Lists'
+  }
 
   state = {
     complete: [],
@@ -12,7 +17,8 @@ class List extends Component {
     key: null,
     confirm: false,
     editKey: null,
-    editItem: ''
+    editItem: '',
+    primed: false
   }
 
   componentDidMount() {
@@ -114,67 +120,39 @@ class List extends Component {
     this.props.navigation.state.params.save(list)
   }
 
-  deleteItem = (key, list) => {
-    Alert.alert(
-      'Delete Item',
-      'Are you sure?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed', key),
-          style: 'cancel',
-        },
-        {
-          text: 'OK', onPress: () => {
-            let arr
-            if (list === 'incomplete') {
-              arr = [...this.state.incomplete]
-            } else {
-              arr = [...this.state.complete]
-            }
-            let index = arr.findIndex(element => {
-              return element.key === key
-            })
-            arr.splice(index, 1)
-            if (list === 'incomplete') {
-              this.setState({
-                incomplete: arr
-              })
-            } else {
-              this.setState({
-                complete: arr
-              })
-            }
-
-            let newList
-            if (list === 'incomplete') {
-              newList = {
-                name: this.state.name,
-                incomplete: arr,
-                complete: this.state.complete,
-                key: this.state.key
-              }
-            } else {
-              newList = {
-                name: this.state.name,
-                incomplete: this.state.incomplete,
-                complete: arr,
-                key: this.state.key
-              }
-            }
-            this.props.navigation.state.params.save(newList)
-          }
-        },
-      ],
-      { cancelable: false },
-    );
+  deleteItem = (key) => {
+    console.log('delete')
+    let arr = [...this.state.incomplete]
+    let index = arr.findIndex(element => {
+      return element.key === key
+    })
+    arr.splice(index, 1)
+    this.setState({
+      incomplete: arr
+    })
+    let newList = {
+      name: this.state.name,
+      incomplete: arr,
+      complete: this.state.complete,
+      key: this.state.key
+    }
+    this.props.navigation.state.params.save(newList)
   }
 
   setEditKey = (key, value) => {
-    this.setState({
-      editKey: key,
-      editItem: value
-    })
+    if (this.state.editKey === null) {
+      this.setState({
+        editKey: key,
+        editItem: value,
+        primed: false
+      })
+    } else {
+      this.editItem()
+      this.setState({
+        editKey: key,
+        editItem: value
+      })
+    }
   }
 
   editItem = () => {
@@ -203,10 +181,32 @@ class List extends Component {
     })
   }
 
+  checkDelete = (e, value, key) => {
+    let index = this.state.incomplete.findIndex(element => {
+      return element.key === key
+    })
+    if (!value) {
+      this.setState({
+        primed: true
+      })
+    }
+    if (!value && this.state.primed) {
+      if(index !== 0){
+        this.setState({
+          editKey: this.state.incomplete[index - 1].key,
+          editItem: this.state.incomplete[index -1].text
+        })
+        this.deleteItem(key)
+      } else {
+        return
+      }
+    }
+  }
+
   render() {
     return (
-      <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'black' }} behavior='padding'>
-        <ScrollView>
+      <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'black' }} behavior='padding' keyboardVerticalOffset={Header.HEIGHT + 70}>
+        <ScrollView keyboardShouldPersistTaps='always'>
           <View style={styles.container}>
             <Text style={styles.title}>{this.state.name}</Text>
             {this.state.incomplete.length > 0 ?
@@ -215,6 +215,7 @@ class List extends Component {
                   return <View
                     key={element.key}
                     style={styles.listItemHold}
+
                   >
                     <CheckBox onPress={() => this.completeItem(element.key)} />
                     {this.state.editKey !== element.key ?
@@ -224,11 +225,15 @@ class List extends Component {
                         style={styles.listItem}>{element.text}
                       </Text> :
                       <TextInput
+                        onKeyPress={(e) => this.checkDelete(e, this.state.editItem, element.key)}
                         onBlur={this.editItem}
                         onSubmitEditing={this.editItem}
-                        autoFocus={true} style={{ width: '80%', fontSize: 24, color: 'white' }}
+                        autoFocus={true}
+                        style={{ width: '80%', fontSize: 24, color: 'white' }}
                         value={this.state.editItem}
-                        onChangeText={(editItem) => this.setState({ editItem })} />}
+                        onChangeText={(editItem) => this.setState({ editItem })}
+                      />}
+
                   </View>
                 })}</View> : <></>}
             <View style={styles.addListHold}>
@@ -270,7 +275,7 @@ const styles = StyleSheet.create({
     // paddingTop: 50
   },
   addListHold: {
-    width: '80%',
+    width: '90%',
     display: 'flex',
     flexDirection: 'row',
     color: 'white'
@@ -285,14 +290,18 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 28,
     color: 'white',
+    padding: 0,
+    margin: 0,
+    width: '100%'
   },
   listItemHold: {
     display: 'flex',
     flexDirection: 'row',
-    borderTopColor: 'white',
-    borderBottomColor: 'white',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
+    width: '100%',
+    // borderTopColor: 'white',
+    // borderBottomColor: 'white',
+    // borderTopWidth: 1,
+    // borderBottomWidth: 1,
     textAlign: 'left',
     alignItems: 'center'
   },
@@ -305,11 +314,11 @@ const styles = StyleSheet.create({
   listNameHold: {
     marginTop: 5,
     marginBottom: 15,
-    width: '80%',
-    borderTopColor: 'black',
-    borderBottomColor: 'black',
-    borderTopWidth: 1,
-    borderBottomWidth: 1
+    width: '100%',
+    // borderTopColor: 'black',
+    // borderBottomColor: 'black',
+    // borderTopWidth: 1,
+    // borderBottomWidth: 1
   }
 });
 

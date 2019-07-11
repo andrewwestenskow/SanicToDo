@@ -24,8 +24,8 @@ const AppNavigator = createStackNavigator(
         backgroundColor: 'black'
       },
       headerTintColor: 'white'
-    }
-    // headerMode: 'none',
+    },
+    headerMode: 'screen',
     // navigationOptions: {
     //   headerVisible: false,
     // }

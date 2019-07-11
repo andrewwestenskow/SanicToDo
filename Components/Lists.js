@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, Alert, TextInput, AsyncStorage } from 'react-native'
 import { withNavigation } from 'react-navigation'
+import Swipeout from 'react-native-swipeout'
 
 class Lists extends Component {
+
+
   state = {
-    addNew: true,
     lists: [],
     name: ''
   }
@@ -20,12 +22,6 @@ class Lists extends Component {
     } else {
       return
     }
-  }
-
-  addNew = () => {
-    this.setState({
-      addNew: !this.state.addNew
-    })
   }
 
   addList = async () => {
@@ -54,7 +50,6 @@ class Lists extends Component {
       let lists = JSON.stringify(newLists)
       // console.log('hit 3')
       this.setState({
-        addNew: false,
         lists: newLists,
         name: ''
       })
@@ -129,6 +124,7 @@ class Lists extends Component {
   }
 
   render() {
+
     return (
       <View style={styles.container}>
         <Text style={styles.title}>My Lists</Text>
@@ -136,21 +132,34 @@ class Lists extends Component {
         {this.state.lists.length > 0 ?
 
           <View style={styles.listNameHold}>{this.state.lists.map(element => {
-            return <Text onLongPress={() => this.deleteItem(element.key)}
-              onPress={() => this.goToList(element)}
-              style={styles.listName}
-              key={element.name}>
-              - {element.name}
-            </Text>
+            return <Swipeout 
+            key={element.key} 
+            left={[{
+              text: 'Delete',
+              backgroundColor: 'red',
+              underlayColor: 'rgba(0,0,0,01,0.6)',
+              onPress: () => this.deleteItem(element.key)
+            }]}
+            backgroundColor='transparent'
+            autoClose={true}
+            >
+              <Text
+                onPress={() => this.goToList(element)}
+                style={styles.listName}
+              >
+                {element.name}
+              </Text>
+            </Swipeout>
           })}</View> : <></>}
-        {this.state.addNew &&
-          <View style={styles.addListHold}>
-            <TextInput
-              onSubmitEditing={this.addList}
-              style={{ width: '80%', fontSize: 24, color: 'white' }}
-              onChangeText={(name) => this.setState({ name })}
-              placeholder='Add new list' />
-          </View>}
+
+        <View style={styles.addListHold}>
+          <TextInput
+            onSubmitEditing={this.addList}
+            style={{ width: '80%', fontSize: 24, color: 'white' }}
+            onChangeText={(name) => this.setState({ name })}
+            placeholder='Add new list'
+            value={this.state.name} />
+        </View>
         {/* <Button style={styles.addNewButton} onPress={this.removeAll} title='Delete all lists' /> */}
       </View>
     )
@@ -167,7 +176,7 @@ const styles = StyleSheet.create({
     // paddingTop: 50
   },
   addListHold: {
-    width: '80%',
+    width: '95%',
     display: 'flex',
     flexDirection: 'row',
     color: 'white'
@@ -182,19 +191,11 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 36,
     color: 'white',
-    borderTopColor: 'white',
-    borderBottomColor: 'white',
-    borderTopWidth: 1,
-    borderBottomWidth: 1
   },
   listNameHold: {
     marginTop: 5,
     marginBottom: 15,
-    width: '80%',
-    borderTopColor: 'white',
-    borderBottomColor: 'white',
-    borderTopWidth: 1,
-    borderBottomWidth: 1
+    width: '95%',
   },
   addNewButton: {
     marginTop: 100,
