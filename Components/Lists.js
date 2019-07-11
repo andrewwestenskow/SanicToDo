@@ -3,7 +3,6 @@ import { Text, View, StyleSheet, Alert, TextInput, AsyncStorage } from 'react-na
 import { withNavigation } from 'react-navigation'
 
 class Lists extends Component {
-
   state = {
     addNew: true,
     lists: [],
@@ -165,7 +164,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'black',
     alignItems: 'center',
-    paddingTop: 50
+    // paddingTop: 50
   },
   addListHold: {
     width: '80%',

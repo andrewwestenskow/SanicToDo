@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'black',
     alignItems: 'center',
-    paddingTop: 50
+    // paddingTop: 50
   },
   addListHold: {
     width: '80%',
