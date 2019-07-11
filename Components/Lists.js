@@ -5,7 +5,6 @@ import Swipeout from 'react-native-swipeout'
 
 class Lists extends Component {
 
-
   state = {
     lists: [],
     name: ''
@@ -131,26 +130,31 @@ class Lists extends Component {
 
         {this.state.lists.length > 0 ?
 
-          <View style={styles.listNameHold}>{this.state.lists.map(element => {
-            return <Swipeout 
-            key={element.key} 
-            left={[{
-              text: 'Delete',
-              backgroundColor: 'red',
-              underlayColor: 'rgba(0,0,0,01,0.6)',
-              onPress: () => this.deleteItem(element.key)
-            }]}
-            backgroundColor='transparent'
-            autoClose={true}
-            >
-              <Text
-                onPress={() => this.goToList(element)}
-                style={styles.listName}
+          <View style={styles.listNameHold}>
+
+            {this.state.lists.map(element => {
+              return <Swipeout
+                key={element.key}
+                right={[{
+                  text: 'Delete',
+                  backgroundColor: 'red',
+                  underlayColor: 'rgba(0,0,0,01,0.6)',
+                  onPress: () => this.deleteItem(element.key)
+                }]}
+                backgroundColor='transparent'
+                autoClose={true}
               >
-                {element.name}
-              </Text>
-            </Swipeout>
-          })}</View> : <></>}
+                <Text
+                  onPress={() => this.goToList(element)}
+                  style={styles.listName}
+                >
+                  {element.name}
+                </Text>
+              </Swipeout>
+            })}
+
+          </View>
+          : <></>}
 
         <View style={styles.addListHold}>
           <TextInput

@@ -121,7 +121,6 @@ class List extends Component {
   }
 
   deleteItem = (key) => {
-    console.log('delete')
     let arr = [...this.state.incomplete]
     let index = arr.findIndex(element => {
       return element.key === key
@@ -177,7 +176,8 @@ class List extends Component {
     this.setState({
       editKey: null,
       editItem: '',
-      incomplete: list
+      incomplete: list,
+      primed: false
     })
   }
 
@@ -191,10 +191,11 @@ class List extends Component {
       })
     }
     if (!value && this.state.primed) {
-      if(index !== 0){
+      if (index !== 0) {
         this.setState({
           editKey: this.state.incomplete[index - 1].key,
-          editItem: this.state.incomplete[index -1].text
+          editItem: this.state.incomplete[index - 1].text,
+          primed: false
         })
         this.deleteItem(key)
       } else {
@@ -221,7 +222,6 @@ class List extends Component {
                     {this.state.editKey !== element.key ?
                       <Text
                         onPress={() => this.setEditKey(element.key, element.text)}
-                        onLongPress={() => this.deleteItem(element.key, 'incomplete')}
                         style={styles.listItem}>{element.text}
                       </Text> :
                       <TextInput
@@ -254,7 +254,6 @@ class List extends Component {
                     onPress={() => this.undoComplete(element.key)}
                     checked={true} />
                   <Text
-                    onLongPress={() => this.deleteItem(element.key, 'complete')}
                     style={styles.listItemComplete}>{element.text}
                   </Text>
                 </View>
