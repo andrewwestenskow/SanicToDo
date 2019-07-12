@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, StyleSheet, Alert, ScrollView, Keyboard, KeyboardAvoidingView } from 'react-native'
+import { View, Text, TextInput, StyleSheet, ScrollView, Keyboard, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
 import { Header } from 'react-navigation'
 import { CheckBox } from 'react-native-elements'
+import DraggableFlatList from 'react-native-draggable-flatlist'
 
 class List extends Component {
 
@@ -181,6 +182,22 @@ class List extends Component {
     })
   }
 
+  moveEnd = (list) => {
+    let newList = {
+      name: this.state.name,
+      incomplete: list,
+      complete: this.state.complete,
+      key: this.state.key
+    }
+    this.props.navigation.state.params.save(newList)
+    this.setState({
+      editKey: null,
+      editItem: '',
+      incomplete: list,
+      primed: false
+    })
+  }
+
   checkDelete = (e, value, key) => {
     let index = this.state.incomplete.findIndex(element => {
       return element.key === key
@@ -204,38 +221,48 @@ class List extends Component {
     }
   }
 
+  renderItem = ({ item, index, move, moveEnd, isActive }) => {
+    return <View
+      key={item.key}
+      style={styles.listItemHold}
+    >
+      <CheckBox onPress={() => this.completeItem(item.key)} />
+      {this.state.editKey !== item.key ?
+        <Text
+          onPress={() => this.setEditKey(item.key, item.text)}
+          style={styles.listItem}
+          onLongPress={move}
+          onPressOut={moveEnd}
+        >
+          {item.text}
+        </Text> :
+        <TextInput
+          onKeyPress={(e) => this.checkDelete(e, this.state.editItem, item.key)}
+          onBlur={this.editItem}
+          onSubmitEditing={this.editItem}
+          autoFocus={true}
+          style={{ width: '80%', fontSize: 24, color: 'white' }}
+          value={this.state.editItem}
+          onChangeText={(editItem) => this.setState({ editItem })}
+        />}
+
+    </View>
+  }
+
   render() {
     return (
       <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'black' }} behavior='padding' keyboardVerticalOffset={Header.HEIGHT + 70}>
         <ScrollView keyboardShouldPersistTaps='always'>
           <View style={styles.container}>
             <Text style={styles.title}>{this.state.name}</Text>
-            {this.state.incomplete.length > 0 ?
-              <View style={styles.listNameHold}>
-                {this.state.incomplete.map(element => {
-                  return <View
-                    key={element.key}
-                    style={styles.listItemHold}
-
-                  >
-                    <CheckBox onPress={() => this.completeItem(element.key)} />
-                    {this.state.editKey !== element.key ?
-                      <Text
-                        onPress={() => this.setEditKey(element.key, element.text)}
-                        style={styles.listItem}>{element.text}
-                      </Text> :
-                      <TextInput
-                        onKeyPress={(e) => this.checkDelete(e, this.state.editItem, element.key)}
-                        onBlur={this.editItem}
-                        onSubmitEditing={this.editItem}
-                        autoFocus={true}
-                        style={{ width: '80%', fontSize: 24, color: 'white' }}
-                        value={this.state.editItem}
-                        onChangeText={(editItem) => this.setState({ editItem })}
-                      />}
-
-                  </View>
-                })}</View> : <></>}
+            {this.state.incomplete.length > 0 ? <View style={styles.listNameHold}>
+              <DraggableFlatList
+                data={this.state.incomplete}
+                renderItem={this.renderItem}
+                onMoveEnd={({data}) => this.moveEnd(data)}
+                scrollPercent={5}
+              />
+            </View> : <></>}
             <View style={styles.addListHold}>
               <TextInput
                 blurOnSubmit={false}
