@@ -330,6 +330,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
+    height: 40,
     // borderTopColor: 'white',
     // borderBottomColor: 'white',
     // borderTopWidth: 1,
