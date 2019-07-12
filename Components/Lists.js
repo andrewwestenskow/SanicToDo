@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, Alert, TextInput, AsyncStorage } from 'react-native'
-import { withNavigation } from 'react-navigation'
+import { Text, View, StyleSheet, Alert, TextInput, AsyncStorage, ScrollView, KeyboardAvoidingView } from 'react-native'
+import { withNavigation, Header } from 'react-navigation'
 import Swipeout from 'react-native-swipeout'
 
 class Lists extends Component {
@@ -125,47 +125,51 @@ class Lists extends Component {
   render() {
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>My Lists</Text>
+      <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'black' }} behavior='padding' keyboardVerticalOffset={Header.HEIGHT + 70}>
+        <ScrollView keyboardShouldPersistTaps='always'>
+          <View style={styles.container}>
+            <Text style={styles.title}>My Lists</Text>
 
-        {this.state.lists.length > 0 ?
+            {this.state.lists.length > 0 ?
 
-          <View style={styles.listNameHold}>
+              <View style={styles.listNameHold}>
 
-            {this.state.lists.map(element => {
-              return <Swipeout
-                key={element.key}
-                right={[{
-                  text: 'Delete',
-                  backgroundColor: 'red',
-                  underlayColor: 'rgba(0,0,0,01,0.6)',
-                  onPress: () => this.deleteItem(element.key)
-                }]}
-                backgroundColor='transparent'
-                autoClose={true}
-              >
-                <Text
-                  onPress={() => this.goToList(element)}
-                  style={styles.listName}
-                >
-                  {element.name}
-                </Text>
-              </Swipeout>
-            })}
+                {this.state.lists.map(element => {
+                  return <Swipeout
+                    key={element.key}
+                    right={[{
+                      text: 'Delete',
+                      backgroundColor: 'red',
+                      underlayColor: 'rgba(0,0,0,01,0.6)',
+                      onPress: () => this.deleteItem(element.key)
+                    }]}
+                    backgroundColor='transparent'
+                    autoClose={true}
+                  >
+                    <Text
+                      onPress={() => this.goToList(element)}
+                      style={styles.listName}
+                    >
+                      {element.name}
+                    </Text>
+                  </Swipeout>
+                })}
 
+              </View>
+              : <></>}
+
+            <View style={styles.addListHold}>
+              <TextInput
+                onSubmitEditing={this.addList}
+                style={{ width: '80%', fontSize: 24, color: 'white' }}
+                onChangeText={(name) => this.setState({ name })}
+                placeholder='Add new list'
+                value={this.state.name} />
+            </View>
+            {/* <Button style={styles.addNewButton} onPress={this.removeAll} title='Delete all lists' /> */}
           </View>
-          : <></>}
-
-        <View style={styles.addListHold}>
-          <TextInput
-            onSubmitEditing={this.addList}
-            style={{ width: '80%', fontSize: 24, color: 'white' }}
-            onChangeText={(name) => this.setState({ name })}
-            placeholder='Add new list'
-            value={this.state.name} />
-        </View>
-        {/* <Button style={styles.addNewButton} onPress={this.removeAll} title='Delete all lists' /> */}
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     )
   }
 }

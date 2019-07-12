@@ -221,42 +221,6 @@ class List extends Component {
     }
   }
 
-  renderItem = ({ item, index, move, moveEnd, isActive }) => {
-    return <View
-      key={item.key}
-      style={styles.listItemHold}
-    >
-      <TouchableOpacity
-        onPressIn={move}
-        onPressOut={moveEnd}
-      >
-        <Icon
-          name='drag-handle'
-          color='white'
-        />
-      </TouchableOpacity>
-      <CheckBox onPress={() => this.completeItem(item.key)} />
-      {this.state.editKey !== item.key ?
-        <Text
-          onPress={() => this.setEditKey(item.key, item.text)}
-          style={styles.listItem}
-
-        >
-          {item.text}
-        </Text> :
-        <TextInput
-          onKeyPress={(e) => this.checkDelete(e, this.state.editItem, item.key)}
-          onBlur={this.editItem}
-          onSubmitEditing={this.editItem}
-          autoFocus={true}
-          style={{ width: '80%', fontSize: 24, color: 'white' }}
-          value={this.state.editItem}
-          onChangeText={(editItem) => this.setState({ editItem })}
-        />}
-
-    </View>
-  }
-
   render() {
     return (
       <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'black' }} behavior='padding' keyboardVerticalOffset={Header.HEIGHT + 70}>
@@ -266,9 +230,43 @@ class List extends Component {
             {this.state.incomplete.length > 0 ? <View style={styles.listNameHold}>
               <DraggableFlatList
                 data={this.state.incomplete}
-                renderItem={this.renderItem}
+                renderItem={({ item, index, move, moveEnd, isActive }) => {
+                  return <View
+                    key={item.key}
+                    style={styles.listItemHold}
+                  >
+                    <TouchableOpacity
+                      onPressIn={move}
+                      onPressOut={moveEnd}
+                    >
+                      <Icon
+                        name='drag-handle'
+                        color='white'
+                      />
+                    </TouchableOpacity>
+                    <CheckBox onPress={() => this.completeItem(item.key)} />
+                    {this.state.editKey !== item.key ?
+                      <Text
+                        onPress={() => this.setEditKey(item.key, item.text)}
+                        style={styles.listItem}
+
+                      >
+                        {item.text}
+                      </Text> :
+                      <TextInput
+                        onKeyPress={(e) => this.checkDelete(e, this.state.editItem, item.key)}
+                        onBlur={this.editItem}
+                        onSubmitEditing={this.editItem}
+                        autoFocus={true}
+                        style={{ width: '80%', fontSize: 24, color: 'white' }}
+                        onChangeText={(editItem) => this.setState({ editItem: editItem })}
+                        value={this.state.editItem}
+                      />}
+
+                  </View>
+                }}
                 onMoveEnd={({ data }) => this.moveEnd(data)}
-                scrollPercent={25}
+                scrollPercent={15}
               />
             </View> : <></>}
             <View style={styles.addListHold}>
