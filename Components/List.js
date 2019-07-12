@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, Text, TextInput, StyleSheet, ScrollView, Keyboard, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
 import { Header } from 'react-navigation'
-import { CheckBox } from 'react-native-elements'
+import { CheckBox, Icon } from 'react-native-elements'
 import DraggableFlatList from 'react-native-draggable-flatlist'
 
 class List extends Component {
@@ -189,13 +189,13 @@ class List extends Component {
       complete: this.state.complete,
       key: this.state.key
     }
-    this.props.navigation.state.params.save(newList)
     this.setState({
       editKey: null,
       editItem: '',
       incomplete: list,
       primed: false
     })
+    this.props.navigation.state.params.save(newList)
   }
 
   checkDelete = (e, value, key) => {
@@ -226,13 +226,21 @@ class List extends Component {
       key={item.key}
       style={styles.listItemHold}
     >
+      <TouchableOpacity
+        onPressIn={move}
+        onPressOut={moveEnd}
+      >
+        <Icon
+          name='drag-handle'
+          color='white'
+        />
+      </TouchableOpacity>
       <CheckBox onPress={() => this.completeItem(item.key)} />
       {this.state.editKey !== item.key ?
         <Text
           onPress={() => this.setEditKey(item.key, item.text)}
           style={styles.listItem}
-          onLongPress={move}
-          onPressOut={moveEnd}
+
         >
           {item.text}
         </Text> :
@@ -259,8 +267,8 @@ class List extends Component {
               <DraggableFlatList
                 data={this.state.incomplete}
                 renderItem={this.renderItem}
-                onMoveEnd={({data}) => this.moveEnd(data)}
-                scrollPercent={5}
+                onMoveEnd={({ data }) => this.moveEnd(data)}
+                scrollPercent={25}
               />
             </View> : <></>}
             <View style={styles.addListHold}>
